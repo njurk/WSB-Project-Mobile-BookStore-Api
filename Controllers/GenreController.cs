@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BookStoreApi.Models;
-using BookStoreApi.Models.Contexts;
+using BookStoreApi.Model.Entities;
+using BookStoreApi.Model.Contexts;
 
 namespace BookStoreApi.Controllers
 {
@@ -14,33 +14,33 @@ namespace BookStoreApi.Controllers
     [ApiController]
     public class GenreController : ControllerBase
     {
-        private readonly BookStorePMAB _context;
+        private readonly BookStorePMABContext _context;
 
-        public GenreController(BookStorePMAB context)
+        public GenreController(BookStorePMABContext context)
         {
             _context = context;
         }
 
         // GET: api/Genre
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Genre>>> GetGenres()
+        public async Task<ActionResult<IEnumerable<Genre>>> GetGenre()
         {
-          if (_context.Genres == null)
+          if (_context.Genre == null)
           {
               return NotFound();
           }
-            return await _context.Genres.ToListAsync();
+            return await _context.Genre.ToListAsync();
         }
 
         // GET: api/Genre/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Genre>> GetGenre(int id)
         {
-          if (_context.Genres == null)
+          if (_context.Genre == null)
           {
               return NotFound();
           }
-            var genre = await _context.Genres.FindAsync(id);
+            var genre = await _context.Genre.FindAsync(id);
 
             if (genre == null)
             {
@@ -86,11 +86,11 @@ namespace BookStoreApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Genre>> PostGenre(Genre genre)
         {
-          if (_context.Genres == null)
+          if (_context.Genre == null)
           {
-              return Problem("Entity set 'BookStorePMAB.Genres'  is null.");
+              return Problem("Entity set 'BookStorePMABContext.Genre'  is null.");
           }
-            _context.Genres.Add(genre);
+            _context.Genre.Add(genre);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetGenre", new { id = genre.GenreId }, genre);
@@ -100,17 +100,17 @@ namespace BookStoreApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGenre(int id)
         {
-            if (_context.Genres == null)
+            if (_context.Genre == null)
             {
                 return NotFound();
             }
-            var genre = await _context.Genres.FindAsync(id);
+            var genre = await _context.Genre.FindAsync(id);
             if (genre == null)
             {
                 return NotFound();
             }
 
-            _context.Genres.Remove(genre);
+            _context.Genre.Remove(genre);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,7 +118,7 @@ namespace BookStoreApi.Controllers
 
         private bool GenreExists(int id)
         {
-            return (_context.Genres?.Any(e => e.GenreId == id)).GetValueOrDefault();
+            return (_context.Genre?.Any(e => e.GenreId == id)).GetValueOrDefault();
         }
     }
 }

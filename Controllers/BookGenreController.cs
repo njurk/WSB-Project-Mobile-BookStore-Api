@@ -12,55 +12,55 @@ namespace BookStoreApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderStatusController : ControllerBase
+    public class BookGenreController : ControllerBase
     {
         private readonly BookStorePMABContext _context;
 
-        public OrderStatusController(BookStorePMABContext context)
+        public BookGenreController(BookStorePMABContext context)
         {
             _context = context;
         }
 
-        // GET: api/OrderStatus
+        // GET: api/BookGenre
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderStatus>>> GetOrderStatus()
+        public async Task<ActionResult<IEnumerable<BookGenre>>> GetBookGenre()
         {
-          if (_context.OrderStatus == null)
+          if (_context.BookGenre == null)
           {
               return NotFound();
           }
-            return await _context.OrderStatus.ToListAsync();
+            return await _context.BookGenre.ToListAsync();
         }
 
-        // GET: api/OrderStatus/5
+        // GET: api/BookGenre/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<OrderStatus>> GetOrderStatus(int id)
+        public async Task<ActionResult<BookGenre>> GetBookGenre(int id)
         {
-          if (_context.OrderStatus == null)
+          if (_context.BookGenre == null)
           {
               return NotFound();
           }
-            var orderStatus = await _context.OrderStatus.FindAsync(id);
+            var bookGenre = await _context.BookGenre.FindAsync(id);
 
-            if (orderStatus == null)
+            if (bookGenre == null)
             {
                 return NotFound();
             }
 
-            return orderStatus;
+            return bookGenre;
         }
 
-        // PUT: api/OrderStatus/5
+        // PUT: api/BookGenre/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrderStatus(int id, OrderStatus orderStatus)
+        public async Task<IActionResult> PutBookGenre(int id, BookGenre bookGenre)
         {
-            if (id != orderStatus.OrderStatusId)
+            if (id != bookGenre.BookGenreId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(orderStatus).State = EntityState.Modified;
+            _context.Entry(bookGenre).State = EntityState.Modified;
 
             try
             {
@@ -68,7 +68,7 @@ namespace BookStoreApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderStatusExists(id))
+                if (!BookGenreExists(id))
                 {
                     return NotFound();
                 }
@@ -81,44 +81,44 @@ namespace BookStoreApi.Controllers
             return NoContent();
         }
 
-        // POST: api/OrderStatus
+        // POST: api/BookGenre
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<OrderStatus>> PostOrderStatus(OrderStatus orderStatus)
+        public async Task<ActionResult<BookGenre>> PostBookGenre(BookGenre bookGenre)
         {
-          if (_context.OrderStatus == null)
+          if (_context.BookGenre == null)
           {
-              return Problem("Entity set 'BookStorePMABContext.OrderStatus'  is null.");
+              return Problem("Entity set 'BookStorePMABContext.BookGenre'  is null.");
           }
-            _context.OrderStatus.Add(orderStatus);
+            _context.BookGenre.Add(bookGenre);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOrderStatus", new { id = orderStatus.OrderStatusId }, orderStatus);
+            return CreatedAtAction("GetBookGenre", new { id = bookGenre.BookGenreId }, bookGenre);
         }
 
-        // DELETE: api/OrderStatus/5
+        // DELETE: api/BookGenre/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrderStatus(int id)
+        public async Task<IActionResult> DeleteBookGenre(int id)
         {
-            if (_context.OrderStatus == null)
+            if (_context.BookGenre == null)
             {
                 return NotFound();
             }
-            var orderStatus = await _context.OrderStatus.FindAsync(id);
-            if (orderStatus == null)
+            var bookGenre = await _context.BookGenre.FindAsync(id);
+            if (bookGenre == null)
             {
                 return NotFound();
             }
 
-            _context.OrderStatus.Remove(orderStatus);
+            _context.BookGenre.Remove(bookGenre);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool OrderStatusExists(int id)
+        private bool BookGenreExists(int id)
         {
-            return (_context.OrderStatus?.Any(e => e.OrderStatusId == id)).GetValueOrDefault();
+            return (_context.BookGenre?.Any(e => e.BookGenreId == id)).GetValueOrDefault();
         }
     }
 }

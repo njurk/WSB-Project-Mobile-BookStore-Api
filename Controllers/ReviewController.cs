@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BookStoreApi.Models;
-using BookStoreApi.Models.Contexts;
+using BookStoreApi.Model.Entities;
+using BookStoreApi.Model.Contexts;
 
 namespace BookStoreApi.Controllers
 {
@@ -14,33 +14,33 @@ namespace BookStoreApi.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        private readonly BookStorePMAB _context;
+        private readonly BookStorePMABContext _context;
 
-        public ReviewController(BookStorePMAB context)
+        public ReviewController(BookStorePMABContext context)
         {
             _context = context;
         }
 
         // GET: api/Review
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
+        public async Task<ActionResult<IEnumerable<Review>>> GetReview()
         {
-          if (_context.Reviews == null)
+          if (_context.Review == null)
           {
               return NotFound();
           }
-            return await _context.Reviews.ToListAsync();
+            return await _context.Review.ToListAsync();
         }
 
         // GET: api/Review/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Review>> GetReview(int id)
         {
-          if (_context.Reviews == null)
+          if (_context.Review == null)
           {
               return NotFound();
           }
-            var review = await _context.Reviews.FindAsync(id);
+            var review = await _context.Review.FindAsync(id);
 
             if (review == null)
             {
@@ -86,11 +86,11 @@ namespace BookStoreApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Review>> PostReview(Review review)
         {
-          if (_context.Reviews == null)
+          if (_context.Review == null)
           {
-              return Problem("Entity set 'BookStorePMAB.Reviews'  is null.");
+              return Problem("Entity set 'BookStorePMABContext.Review'  is null.");
           }
-            _context.Reviews.Add(review);
+            _context.Review.Add(review);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetReview", new { id = review.ReviewId }, review);
@@ -100,17 +100,17 @@ namespace BookStoreApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReview(int id)
         {
-            if (_context.Reviews == null)
+            if (_context.Review == null)
             {
                 return NotFound();
             }
-            var review = await _context.Reviews.FindAsync(id);
+            var review = await _context.Review.FindAsync(id);
             if (review == null)
             {
                 return NotFound();
             }
 
-            _context.Reviews.Remove(review);
+            _context.Review.Remove(review);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,7 +118,7 @@ namespace BookStoreApi.Controllers
 
         private bool ReviewExists(int id)
         {
-            return (_context.Reviews?.Any(e => e.ReviewId == id)).GetValueOrDefault();
+            return (_context.Review?.Any(e => e.ReviewId == id)).GetValueOrDefault();
         }
     }
 }

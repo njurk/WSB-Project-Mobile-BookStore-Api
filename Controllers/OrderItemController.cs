@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BookStoreApi.Models;
-using BookStoreApi.Models.Contexts;
+using BookStoreApi.Model.Entities;
+using BookStoreApi.Model.Contexts;
 
 namespace BookStoreApi.Controllers
 {
@@ -14,33 +14,33 @@ namespace BookStoreApi.Controllers
     [ApiController]
     public class OrderItemController : ControllerBase
     {
-        private readonly BookStorePMAB _context;
+        private readonly BookStorePMABContext _context;
 
-        public OrderItemController(BookStorePMAB context)
+        public OrderItemController(BookStorePMABContext context)
         {
             _context = context;
         }
 
         // GET: api/OrderItem
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrderItems()
+        public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrderItem()
         {
-          if (_context.OrderItems == null)
+          if (_context.OrderItem == null)
           {
               return NotFound();
           }
-            return await _context.OrderItems.ToListAsync();
+            return await _context.OrderItem.ToListAsync();
         }
 
         // GET: api/OrderItem/5
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderItem>> GetOrderItem(int id)
         {
-          if (_context.OrderItems == null)
+          if (_context.OrderItem == null)
           {
               return NotFound();
           }
-            var orderItem = await _context.OrderItems.FindAsync(id);
+            var orderItem = await _context.OrderItem.FindAsync(id);
 
             if (orderItem == null)
             {
@@ -86,11 +86,11 @@ namespace BookStoreApi.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderItem>> PostOrderItem(OrderItem orderItem)
         {
-          if (_context.OrderItems == null)
+          if (_context.OrderItem == null)
           {
-              return Problem("Entity set 'BookStorePMAB.OrderItems'  is null.");
+              return Problem("Entity set 'BookStorePMABContext.OrderItem'  is null.");
           }
-            _context.OrderItems.Add(orderItem);
+            _context.OrderItem.Add(orderItem);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOrderItem", new { id = orderItem.OrderItemId }, orderItem);
@@ -100,17 +100,17 @@ namespace BookStoreApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrderItem(int id)
         {
-            if (_context.OrderItems == null)
+            if (_context.OrderItem == null)
             {
                 return NotFound();
             }
-            var orderItem = await _context.OrderItems.FindAsync(id);
+            var orderItem = await _context.OrderItem.FindAsync(id);
             if (orderItem == null)
             {
                 return NotFound();
             }
 
-            _context.OrderItems.Remove(orderItem);
+            _context.OrderItem.Remove(orderItem);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,7 +118,7 @@ namespace BookStoreApi.Controllers
 
         private bool OrderItemExists(int id)
         {
-            return (_context.OrderItems?.Any(e => e.OrderItemId == id)).GetValueOrDefault();
+            return (_context.OrderItem?.Any(e => e.OrderItemId == id)).GetValueOrDefault();
         }
     }
 }

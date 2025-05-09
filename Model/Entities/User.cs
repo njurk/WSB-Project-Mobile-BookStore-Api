@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookStoreApi.Models
+namespace BookStoreApi.Model.Entities
 {
     [Table("User")]
     [Index("Username", Name = "UQ__User__536C85E4551E1A01", IsUnique = true)]
@@ -13,9 +13,10 @@ namespace BookStoreApi.Models
     {
         public User()
         {
+            Carts = new HashSet<Cart>();
+            Collections = new HashSet<Collection>();
             Orders = new HashSet<Order>();
             Reviews = new HashSet<Review>();
-            Books = new HashSet<Book>();
         }
 
         [Key]
@@ -41,12 +42,12 @@ namespace BookStoreApi.Models
         public string? PostalCode { get; set; }
 
         [InverseProperty("User")]
+        public virtual ICollection<Cart> Carts { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
+        [InverseProperty("User")]
         public virtual ICollection<Order> Orders { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<Review> Reviews { get; set; }
-
-        [ForeignKey("UserId")]
-        [InverseProperty("Users")]
-        public virtual ICollection<Book> Books { get; set; }
     }
 }

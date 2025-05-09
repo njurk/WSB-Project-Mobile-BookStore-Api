@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BookStoreApi.Models;
-using BookStoreApi.Models.Contexts;
+using BookStoreApi.Model.Entities;
+using BookStoreApi.Model.Contexts;
+using BookStoreApi.Models.Services;
 
 namespace BookStoreApi.Controllers
 {
@@ -14,44 +13,41 @@ namespace BookStoreApi.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private readonly BookStorePMAB _context;
+        private readonly BookStorePMABContext _context;
+        private BookService _bookService;
 
-        public BookController(BookStorePMAB context)
+        public BookController(BookStorePMABContext context)
         {
             _context = context;
+            _bookService = new BookService(_context);
         }
 
         // GET: api/Book
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<ActionResult<IEnumerable<Book>>> GetBook()
         {
-          if (_context.Books == null)
-          {
-              return NotFound();
-          }
-            return await _context.Books.ToListAsync();
+            if (_context.Book == null)
+            {
+                return NotFound();
+            }
+            return await _context.Book.ToListAsync();
         }
 
         // GET: api/Book/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public async Task<ActionResult<object>> GetBook(int id)
         {
-          if (_context.Books == null)
-          {
-              return NotFound();
-          }
-            var book = await _context.Books.FindAsync(id);
+            var bookWithAvg = await _bookService.GetBookWithAverageRatingAsync(id);
 
-            if (book == null)
+            if (bookWithAvg == null)
             {
                 return NotFound();
             }
 
-            return book;
+            return Ok(bookWithAvg);
         }
 
         // PUT: api/Book/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBook(int id, Book book)
         {
@@ -82,15 +78,14 @@ namespace BookStoreApi.Controllers
         }
 
         // POST: api/Book
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Book>> PostBook(Book book)
         {
-          if (_context.Books == null)
-          {
-              return Problem("Entity set 'BookStorePMAB.Books'  is null.");
-          }
-            _context.Books.Add(book);
+            if (_context.Book == null)
+            {
+                return Problem("Entity set 'BookStorePMABContext.Book' is null.");
+            }
+            _context.Book.Add(book);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetBook", new { id = book.BookId }, book);
@@ -100,17 +95,17 @@ namespace BookStoreApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
-            if (_context.Books == null)
+            if (_context.Book == null)
             {
                 return NotFound();
             }
-            var book = await _context.Books.FindAsync(id);
+            var book = await _context.Book.FindAsync(id);
             if (book == null)
             {
                 return NotFound();
             }
 
-            _context.Books.Remove(book);
+            _context.Book.Remove(book);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,7 +113,7 @@ namespace BookStoreApi.Controllers
 
         private bool BookExists(int id)
         {
-            return (_context.Books?.Any(e => e.BookId == id)).GetValueOrDefault();
+            return (_context.Book?.Any(e => e.BookId == id)).GetValueOrDefault();
         }
     }
 }

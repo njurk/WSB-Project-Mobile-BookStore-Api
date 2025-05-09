@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookStoreApi.Models
+namespace BookStoreApi.Model.Entities
 {
     [Table("Book")]
     [Index("Isbn", Name = "UQ__Book__447D36EA866A09CF", IsUnique = true)]
@@ -12,10 +12,11 @@ namespace BookStoreApi.Models
     {
         public Book()
         {
+            BookGenres = new HashSet<BookGenre>();
+            Carts = new HashSet<Cart>();
+            Collections = new HashSet<Collection>();
             OrderItems = new HashSet<OrderItem>();
             Reviews = new HashSet<Review>();
-            Genres = new HashSet<Genre>();
-            Users = new HashSet<User>();
         }
 
         [Key]
@@ -47,15 +48,14 @@ namespace BookStoreApi.Models
         [InverseProperty("Books")]
         public virtual Author Author { get; set; } = null!;
         [InverseProperty("Book")]
+        public virtual ICollection<BookGenre> BookGenres { get; set; }
+        [InverseProperty("Book")]
+        public virtual ICollection<Cart> Carts { get; set; }
+        [InverseProperty("Book")]
+        public virtual ICollection<Collection> Collections { get; set; }
+        [InverseProperty("Book")]
         public virtual ICollection<OrderItem> OrderItems { get; set; }
         [InverseProperty("Book")]
         public virtual ICollection<Review> Reviews { get; set; }
-
-        [ForeignKey("BookId")]
-        [InverseProperty("Books")]
-        public virtual ICollection<Genre> Genres { get; set; }
-        [ForeignKey("BookId")]
-        [InverseProperty("Books")]
-        public virtual ICollection<User> Users { get; set; }
     }
 }

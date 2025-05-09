@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookStoreApi.Models
+namespace BookStoreApi.Model.Entities
 {
     [Table("OrderStatus")]
     [Index("Name", Name = "UQ__OrderSta__737584F67B77D4DE", IsUnique = true)]

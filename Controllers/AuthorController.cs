@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BookStoreApi.Models;
-using BookStoreApi.Models.Contexts;
+using BookStoreApi.Model.Entities;
+using BookStoreApi.Model.Contexts;
 
 namespace BookStoreApi.Controllers
 {
@@ -14,33 +9,33 @@ namespace BookStoreApi.Controllers
     [ApiController]
     public class AuthorController : ControllerBase
     {
-        private readonly BookStorePMAB _context;
+        private readonly BookStorePMABContext _context;
 
-        public AuthorController(BookStorePMAB context)
+        public AuthorController(BookStorePMABContext context)
         {
             _context = context;
         }
 
         // GET: api/Author
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
+        public async Task<ActionResult<IEnumerable<Author>>> GetAuthor()
         {
-          if (_context.Authors == null)
+          if (_context.Author == null)
           {
               return NotFound();
           }
-            return await _context.Authors.ToListAsync();
+            return await _context.Author.ToListAsync();
         }
 
         // GET: api/Author/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Author>> GetAuthor(int id)
         {
-          if (_context.Authors == null)
+          if (_context.Author == null)
           {
               return NotFound();
           }
-            var author = await _context.Authors.FindAsync(id);
+            var author = await _context.Author.FindAsync(id);
 
             if (author == null)
             {
@@ -86,11 +81,11 @@ namespace BookStoreApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Author>> PostAuthor(Author author)
         {
-          if (_context.Authors == null)
+          if (_context.Author == null)
           {
-              return Problem("Entity set 'BookStorePMAB.Authors'  is null.");
+              return Problem("Entity set 'BookStorePMABContext.Author'  is null.");
           }
-            _context.Authors.Add(author);
+            _context.Author.Add(author);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetAuthor", new { id = author.AuthorId }, author);
@@ -100,17 +95,17 @@ namespace BookStoreApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
-            if (_context.Authors == null)
+            if (_context.Author == null)
             {
                 return NotFound();
             }
-            var author = await _context.Authors.FindAsync(id);
+            var author = await _context.Author.FindAsync(id);
             if (author == null)
             {
                 return NotFound();
             }
 
-            _context.Authors.Remove(author);
+            _context.Author.Remove(author);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,7 +113,7 @@ namespace BookStoreApi.Controllers
 
         private bool AuthorExists(int id)
         {
-            return (_context.Authors?.Any(e => e.AuthorId == id)).GetValueOrDefault();
+            return (_context.Author?.Any(e => e.AuthorId == id)).GetValueOrDefault();
         }
     }
 }

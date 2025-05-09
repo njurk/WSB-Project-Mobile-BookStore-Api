@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookStoreApi.Models
+namespace BookStoreApi.Model.Entities
 {
     [Table("Author")]
     public partial class Author

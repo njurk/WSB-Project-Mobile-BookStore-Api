@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using BookStoreApi.Models.Contexts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.FileProviders;
+using BookStoreApi.Model.Contexts;
+//using BookStoreApi.Model.Entities;
 
 namespace BookStoreApi
 {
@@ -15,11 +17,17 @@ namespace BookStoreApi
 
             // Add services to the container.
 
-            builder.Services.AddDbContext<BookStorePMAB>(options =>
+            builder.Services.AddDbContext<BookStorePMABContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("BookStorePMAB")
                 ?? throw new InvalidOperationException("Connection string 'BookStorePMAB' not found.")));
 
             builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -39,9 +47,15 @@ namespace BookStoreApi
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+                app.UseStaticFiles();
 
-            app.UseHttpsRedirection();
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        Path.Combine(builder.Environment.ContentRootPath, "images")),
+                    RequestPath = "/images"
+                });
+            }
 
             app.UseCors("AllowAll");
 

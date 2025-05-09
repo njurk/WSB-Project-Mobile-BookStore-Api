@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookStoreApi.Models
+namespace BookStoreApi.Model.Entities
 {
     [Table("Genre")]
     [Index("Name", Name = "UQ__Genre__737584F6892E8E73", IsUnique = true)]
@@ -12,7 +12,7 @@ namespace BookStoreApi.Models
     {
         public Genre()
         {
-            Books = new HashSet<Book>();
+            BookGenres = new HashSet<BookGenre>();
         }
 
         [Key]
@@ -22,8 +22,7 @@ namespace BookStoreApi.Models
         [Unicode(false)]
         public string Name { get; set; } = null!;
 
-        [ForeignKey("GenreId")]
-        [InverseProperty("Genres")]
-        public virtual ICollection<Book> Books { get; set; }
+        [InverseProperty("Genre")]
+        public virtual ICollection<BookGenre> BookGenres { get; set; }
     }
 }
