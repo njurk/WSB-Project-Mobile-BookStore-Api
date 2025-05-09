@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookStoreApi.Model.Entities;
 using BookStoreApi.Model.Contexts;
+using BookStoreApi.Models.DTOs;
 
 namespace BookStoreApi.Controllers
 {
@@ -50,6 +46,22 @@ namespace BookStoreApi.Controllers
             return review;
         }
 
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<IEnumerable<Review>>> GetReviewsByUser(int userId)
+        {
+            if (_context.Review == null)
+            {
+                return NotFound();
+            }
+
+            var reviews = await _context.Review
+                .Where(r => r.UserId == userId)
+                .Include(r => r.Book)
+                .ToListAsync();
+
+            return reviews;
+        }
+
         // PUT: api/Review/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -81,17 +93,48 @@ namespace BookStoreApi.Controllers
             return NoContent();
         }
 
+        // PATCH
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Review>> PatchReview(int id, [FromBody] ReviewPatchDto patchDto)
+        {
+            if (patchDto == null)
+                return BadRequest();
+
+            var review = await _context.Review.FindAsync(id);
+            if (review == null)
+                return NotFound();
+
+            if (patchDto.Rating.HasValue)
+                review.Rating = patchDto.Rating.Value;
+
+            if (patchDto.Comment != null)
+                review.Comment = patchDto.Comment;
+
+            await _context.SaveChangesAsync();
+
+            await _context.Entry(review).Reference(r => r.Book).LoadAsync();
+
+            return Ok(review);
+        }
+
         // POST: api/Review
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Review>> PostReview(Review review)
+        public async Task<ActionResult<Review>> PostReview(ReviewCreateDto dto)
         {
-          if (_context.Review == null)
-          {
-              return Problem("Entity set 'BookStorePMABContext.Review'  is null.");
-          }
+            var review = new Review
+            {
+                BookId = dto.BookId,
+                UserId = dto.UserId,
+                Rating = dto.Rating,
+                Comment = dto.Comment,
+                DateCreated = DateTime.UtcNow
+            };
+
             _context.Review.Add(review);
             await _context.SaveChangesAsync();
+
+            await _context.Entry(review).Reference(r => r.User).LoadAsync();
 
             return CreatedAtAction("GetReview", new { id = review.ReviewId }, review);
         }

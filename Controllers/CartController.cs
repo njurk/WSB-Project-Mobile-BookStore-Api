@@ -84,19 +84,16 @@ namespace BookStoreApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Cart>> PostCartItem(CartCreateDto dto)
         {
-            // Check if the item already exists in the cart for the user
             var existingCartItem = await _context.Cart
                 .FirstOrDefaultAsync(c => c.UserId == dto.UserId && c.BookId == dto.BookId);
 
             if (existingCartItem != null)
             {
-                // If the item exists, increase the quantity
                 existingCartItem.Quantity += dto.Quantity;
                 _context.Entry(existingCartItem).State = EntityState.Modified;
             }
             else
             {
-                // If the item doesn't exist, create a new cart item
                 var cartItem = new Cart
                 {
                     UserId = dto.UserId,
@@ -109,7 +106,6 @@ namespace BookStoreApi.Controllers
 
             await _context.SaveChangesAsync();
 
-            // Load the cart item including the Book navigation property
             var fullCartItem = await _context.Cart
                 .Include(c => c.Book)
                 .FirstOrDefaultAsync(c => c.UserId == dto.UserId && c.BookId == dto.BookId);

@@ -1,11 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.FileProviders;
 using BookStoreApi.Model.Contexts;
-//using BookStoreApi.Model.Entities;
 
 namespace BookStoreApi
 {

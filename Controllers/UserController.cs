@@ -90,7 +90,6 @@ namespace BookStoreApi.Controllers
             if (user == null)
                 return NotFound();
 
-            // Update only non-null fields
             if (dto.Username != null) user.Username = dto.Username;
             if (dto.Email != null) user.Email = dto.Email;
             if (dto.Password != null)
