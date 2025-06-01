@@ -95,14 +95,17 @@ namespace BookStoreApi.Controllers
 
         // PATCH
         [HttpPatch("{id}")]
-        public async Task<ActionResult<Review>> PatchReview(int id, [FromBody] ReviewPatchDto patchDto)
+        public async Task<IActionResult> PatchReview(int id, [FromBody] ReviewPatchDto patchDto)
         {
-            if (patchDto == null)
-                return BadRequest();
+            var review = await _context.Review
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.ReviewId == id);
 
-            var review = await _context.Review.FindAsync(id);
             if (review == null)
                 return NotFound();
+
+            if (patchDto.UserId != review.UserId)
+                return Forbid();
 
             if (patchDto.Rating.HasValue)
                 review.Rating = patchDto.Rating.Value;
@@ -111,8 +114,6 @@ namespace BookStoreApi.Controllers
                 review.Comment = patchDto.Comment;
 
             await _context.SaveChangesAsync();
-
-            await _context.Entry(review).Reference(r => r.Book).LoadAsync();
 
             return Ok(review);
         }
@@ -141,17 +142,14 @@ namespace BookStoreApi.Controllers
 
         // DELETE: api/Review/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReview(int id)
+        public async Task<IActionResult> DeleteReview(int id, [FromQuery] int userId)
         {
-            if (_context.Review == null)
-            {
-                return NotFound();
-            }
             var review = await _context.Review.FindAsync(id);
             if (review == null)
-            {
                 return NotFound();
-            }
+
+            if (review.UserId != userId)
+                return Forbid();
 
             _context.Review.Remove(review);
             await _context.SaveChangesAsync();

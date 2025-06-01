@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookStoreApi.Model.Entities;
 using BookStoreApi.Model.Contexts;
+using BookStoreApi.Models.DTOs;
 
 namespace BookStoreApi.Controllers
 {
@@ -23,13 +24,22 @@ namespace BookStoreApi.Controllers
 
         // GET: api/BookGenre
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookGenre>>> GetBookGenre()
+        public async Task<ActionResult<IEnumerable<BookGenreDto>>> GetBookGenres()
         {
-          if (_context.BookGenre == null)
-          {
-              return NotFound();
-          }
-            return await _context.BookGenre.ToListAsync();
+            if (_context.BookGenre == null)
+            {
+                return NotFound();
+            }
+
+            var data = await _context.BookGenre
+                .Select(bg => new BookGenreDto
+                {
+                    BookId = bg.BookId,
+                    GenreId = bg.GenreId
+                })
+                .ToListAsync();
+
+            return Ok(data);
         }
 
         // GET: api/BookGenre/5

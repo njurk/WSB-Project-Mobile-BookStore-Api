@@ -106,6 +106,12 @@ namespace BookStoreApi.Model.Contexts
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_Order_User");
+
+                entity.HasMany(e => e.OrderItems)
+                  .WithOne(e => e.Order)
+                  .HasForeignKey(e => e.OrderId)
+                  .OnDelete(DeleteBehavior.Cascade)
+                  .HasConstraintName("FK_OrderItem_Order");
             });
 
             modelBuilder.Entity<OrderItem>(entity =>
