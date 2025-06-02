@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookStoreApi.Migrations
 {
     [DbContext(typeof(BookStorePMABContext))]
-    [Migration("20250530235413_orderitem_relationship_fix")]
-    partial class orderitem_relationship_fix
+    [Migration("20250602095816_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
