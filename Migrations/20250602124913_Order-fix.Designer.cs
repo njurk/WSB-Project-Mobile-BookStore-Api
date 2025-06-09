@@ -4,6 +4,7 @@ using BookStoreApi.Model.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookStoreApi.Migrations
 {
     [DbContext(typeof(BookStorePMABContext))]
-    partial class BookStorePMABContextModelSnapshot : ModelSnapshot
+    [Migration("20250602124913_Order-fix")]
+    partial class Orderfix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,27 +195,6 @@ namespace BookStoreApi.Migrations
                     b.ToTable("Collection");
                 });
 
-            modelBuilder.Entity("BookStoreApi.Model.Entities.DeliveryType", b =>
-                {
-                    b.Property<int>("DeliveryTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeliveryTypeId"), 1L, 1);
-
-                    b.Property<decimal>("Fee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("DeliveryTypeId");
-
-                    b.ToTable("DeliveryType");
-                });
-
             modelBuilder.Entity("BookStoreApi.Model.Entities.Genre", b =>
                 {
                     b.Property<int>("GenreId")
@@ -251,8 +232,13 @@ namespace BookStoreApi.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("City");
 
-                    b.Property<int>("DeliveryTypeId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("DeliveryFee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DeliveryType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("DeliveryType");
 
                     b.Property<DateTime>("OrderDate")
                         .ValueGeneratedOnAdd()
@@ -278,8 +264,6 @@ namespace BookStoreApi.Migrations
                         .HasColumnName("UserID");
 
                     b.HasKey("OrderId");
-
-                    b.HasIndex("DeliveryTypeId");
 
                     b.HasIndex("OrderStatusId");
 
@@ -508,12 +492,6 @@ namespace BookStoreApi.Migrations
 
             modelBuilder.Entity("BookStoreApi.Model.Entities.Order", b =>
                 {
-                    b.HasOne("BookStoreApi.Model.Entities.DeliveryType", "DeliveryType")
-                        .WithMany("Orders")
-                        .HasForeignKey("DeliveryTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("BookStoreApi.Model.Entities.OrderStatus", "OrderStatus")
                         .WithMany("Orders")
                         .HasForeignKey("OrderStatusId")
@@ -526,8 +504,6 @@ namespace BookStoreApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Order_User");
-
-                    b.Navigation("DeliveryType");
 
                     b.Navigation("OrderStatus");
 
@@ -591,11 +567,6 @@ namespace BookStoreApi.Migrations
                     b.Navigation("OrderItems");
 
                     b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("BookStoreApi.Model.Entities.DeliveryType", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("BookStoreApi.Model.Entities.Genre", b =>

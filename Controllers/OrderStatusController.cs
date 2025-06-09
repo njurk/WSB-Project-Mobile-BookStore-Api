@@ -86,10 +86,6 @@ namespace BookStoreApi.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderStatus>> PostOrderStatus(OrderStatus orderStatus)
         {
-          if (_context.OrderStatus == null)
-          {
-              return Problem("Entity set 'BookStorePMABContext.OrderStatus'  is null.");
-          }
             _context.OrderStatus.Add(orderStatus);
             await _context.SaveChangesAsync();
 

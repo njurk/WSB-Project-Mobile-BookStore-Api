@@ -149,5 +149,7 @@ namespace BookStoreApi.Model.Contexts
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+        public DbSet<BookStoreApi.Model.Entities.DeliveryType>? DeliveryType { get; set; }
     }
 }

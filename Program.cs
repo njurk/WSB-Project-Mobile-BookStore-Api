@@ -10,8 +10,6 @@ namespace BookStoreApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddDbContext<BookStorePMABContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("BookStorePMAB")
                 ?? throw new InvalidOperationException("Connection string 'BookStorePMAB' not found.")));
@@ -37,7 +35,6 @@ namespace BookStoreApi
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

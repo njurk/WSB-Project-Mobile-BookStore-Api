@@ -107,10 +107,6 @@ namespace BookStoreApi.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-          if (_context.User == null)
-          {
-              return Problem("Entity set 'BookStorePMABContext.User'  is null.");
-          }
             _context.User.Add(user);
             await _context.SaveChangesAsync();
 
@@ -121,15 +117,25 @@ namespace BookStoreApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            if (_context.User == null)
-            {
-                return NotFound();
-            }
             var user = await _context.User.FindAsync(id);
             if (user == null)
-            {
                 return NotFound();
-            }
+
+            var carts = await _context.Cart.Where(c => c.UserId == id).ToListAsync();
+            if (carts.Any())
+                _context.Cart.RemoveRange(carts);
+
+            var orders = await _context.Order.Where(o => o.UserId == id).ToListAsync();
+            if (orders.Any())
+                _context.Order.RemoveRange(orders);
+
+            var reviews = await _context.Review.Where(r => r.UserId == id).ToListAsync();
+            if (reviews.Any())
+                _context.Review.RemoveRange(reviews);
+
+            var collections = await _context.Collection.Where(c => c.UserId == id).ToListAsync();
+            if (collections.Any())
+                _context.Collection.RemoveRange(collections);
 
             _context.User.Remove(user);
             await _context.SaveChangesAsync();
@@ -145,16 +151,13 @@ namespace BookStoreApi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login([FromBody] LoginRequest request)
         {
-            if (_context.User == null)
-                return NotFound("User database not found.");
-
             var user = await _context.User
                 .FirstOrDefaultAsync(u =>
                     (u.Email == request.Identifier || u.Username == request.Identifier)
                     && u.Password == request.Password);
 
             if (user == null)
-                return Unauthorized("Invalid username/email or password.");
+                return Unauthorized("Invalid username/email or password");
 
             return Ok(user);
         }
