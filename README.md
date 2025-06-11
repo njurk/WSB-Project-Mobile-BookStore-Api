@@ -21,10 +21,10 @@ where the user can browse and save books, place orders, read and post reviews.
    - Update `appsettings.json` with your database connection string
 
 3. **Database Migration**
-  - dotnet ef database update
+   - dotnet ef database update
 
 4. **Run the API**
-  - dotnet run --project BookStoreApi
+   - dotnet run --project BookStoreApi
 
 5. **API Usage**
    - The API will be available at `https://localhost:5001` (or as configured)
